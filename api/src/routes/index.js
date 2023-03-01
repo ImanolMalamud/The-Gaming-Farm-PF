@@ -2,7 +2,6 @@ const { Router } = require("express")
 const mercadopago = require("mercadopago")
 require("dotenv").config()
 const axios = require("axios")
-const prodJson = require("../../productos.json")
 const { desactivarUsuario } = require("../controllers/userControllers")
 
 // Modelos de la base de datos ↓
@@ -11,9 +10,8 @@ const {
   getAllProducts,
   createProducts,
   getCategories,
-  getMarks,
   modifyProducts,
-} = require("../controllers/products/Controllers")
+} = require("../controllers/productControllers")
 const {
   getAllReview,
   reviewCreate,
@@ -35,13 +33,21 @@ const {
 const configurandoEmail = require("../config/mailer")
 const mensajeBienvenida = require("../config/mailerBienvenida")
 
+const produtRoutes = require("../routes/productRoutes")
+const markRoutes = require("../routes/markRoutes")
+
 const router = Router()
+
+// Load database with all products
+router.use("/products", produtRoutes)
+
+router.use("/marks", markRoutes)
 
 // MIDDLEWARES 📌
 // router.use('/auth', authRouter);
 
 // Traer todos los usuarios de la base de datos
-const getDbInfo = async () => {
+const getUsersDb = async () => {
   return await User.findAll()
 }
 
@@ -61,7 +67,7 @@ router.get("/usuarios", async (req, res) => {
   const name = req.query.name // ?name="..."
 
   if (name) {
-    let users = await getDbInfo()
+    let users = await getUsersDb()
 
     //Comparamos ambos valores en minuscula
     let usuarioName = await users.filter(
@@ -78,7 +84,7 @@ router.get("/usuarios", async (req, res) => {
   } else {
     //no hay query → Enviar todos los datos normal
 
-    let users = await getDbInfo()
+    let users = await getUsersDb()
     res.status(200).send(users)
   }
 }) // ✅✅✅✅✅
@@ -91,40 +97,39 @@ router.get("/usuario/name", async (req, res) => {
 // **********************
 // PRODUCTOS
 // **********************
-router.get("/products", async (req, res) => {
-  const nombre = req.query.title
-  let allprod = await getAllProducts()
+// router.get("/products", async (req, res) => {
+//   const nombre = req.query.title
+//   let allprod = await getAllProducts()
 
-  if (nombre) {
-    let videogamesName = await allprod.filter(el =>
-      el.title.toLowerCase().includes(nombre.toLowerCase())
-    )
-    videogamesName.length
-      ? res.status(200).send(videogamesName.slice(0, 15))
-      : res.status(404).send("product not found")
-  } else {
-    res.status(200).send(allprod)
-  }
-})
+//   if (nombre) {
+//     let videogamesName = await allprod.filter(el =>
+//       el.title.toLowerCase().includes(nombre.toLowerCase())
+//     )
+//     videogamesName.length
+//       ? res.status(200).send(videogamesName.slice(0, 15))
+//       : res.status(404).send("product not found")
+//   } else {
+//     res.status(200).send(allprod)
+//   }
+// })
 
 // getAllProducts);
-router.post("/products", createProducts)
+// router.post("/products", createProducts)
 
 router.get("/category", getCategories)
-router.get("/mark", getMarks)
 
-router.get("/products/:id", async (req, res) => {
-  // res.send("Soy el get /videogame")
-  const { id } = req.params
-  let allprodById = await getAllProducts()
+// router.get("/products/:id", async (req, res) => {
+//   // res.send("Soy el get /videogame")
+//   const { id } = req.params
+//   let allprodById = await getAllProducts()
 
-  if (id) {
-    let ProdId = allprodById.filter(e => e.id == id)
-    ProdId.length
-      ? res.status(200).json(ProdId)
-      : res.status(404).send("No existe juego con ese Id")
-  }
-})
+//   if (id) {
+//     let ProdId = allprodById.filter(e => e.id == id)
+//     ProdId.length
+//       ? res.status(200).json(ProdId)
+//       : res.status(404).send("No existe juego con ese Id")
+//   }
+// })
 
 mercadopago.configure({ access_token: process.env.MERCADOPAGO_KEY })
 
@@ -167,7 +172,7 @@ router.post("/payment", (req, res) => {
     })
 })
 
-router.put("/products/:id", modifyProducts)
+// router.put("/products/:id", modifyProducts)
 // router.post("/enviarMensaje", enviarMail)
 
 // ??? AL USUARIO AL COMPRAR ???
@@ -363,63 +368,10 @@ const consola = [
   { title: "Nintendo Switch" },
 ]
 
-const mark = [{ title: "Juegos" }, { title: "Mandos" }]
-
 const createCategory = async () => {
   try {
     await Category.bulkCreate(consola)
     return "Se crearon categorias"
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-const createMark = async () => {
-  try {
-    await Mark.bulkCreate(mark)
-    return "Se crearon juegos y mandos"
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-const createProduct = async () => {
-  try {
-    let category = ""
-    let marca = ""
-    let producto = ""
-    let allProducts = []
-    let agregarCategory = []
-    let agregarMark = []
-
-    for (let i = 0; i < prodJson.products.length; i++) {
-      category = await Category.findOne({
-        where: { title: prodJson.products[i].category },
-      })
-
-      marca = await Mark.findOne({
-        where: { title: prodJson.products[i].mark },
-      })
-
-      producto = await Product.create({
-        title: prodJson.products[i].title,
-        price: prodJson.products[i].price,
-        detail: prodJson.products[i].detail,
-        img: prodJson.products[i].img,
-        stock: prodJson.products[i].stock,
-      })
-
-      await producto.addMark(marca)
-      await producto.addCategory(category)
-
-      // allProducts.push(producto)
-      // agregarCategory.push(addC)
-      // agregarMark.push(addM)
-
-      // await Promise.all([...category, ...marca, ...producto])
-    }
-
-    return "La base de datos se ha cargado con exito"
   } catch (error) {
     console.log(error)
   }
@@ -483,22 +435,6 @@ const filterByCategory = async consola => {
   })
   return data[0].Products
 }
-
-router.get("/db", async (req, res) => {
-  try {
-    //   const categories = await createCategory();
-    //   const marks = await createMark();
-    await createCategory()
-    await createMark()
-
-    const products = await createProduct()
-
-    return res.status(200).send(products)
-  } catch (error) {
-    console.log(error)
-    return res.status(404).json(error)
-  }
-})
 
 router.get("/filterByMandos", async (req, res) => {
   try {

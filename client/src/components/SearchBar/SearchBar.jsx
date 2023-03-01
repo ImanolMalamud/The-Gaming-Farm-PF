@@ -26,10 +26,13 @@ export default function SearchBar() {
   return (
     <form role="search">
 
-      <Box display="d-flex" columnGap="3px">
+      <Box display="d-flex" alignItems="center" width="300px">
         <input
           type="search"
           className="form-control"
+          style={{
+            height: "30px"
+          }}
           placeholder="Buscar"
           aria-label="Search"
           onChange={(e) => { handleInputChange(e) }}
@@ -37,9 +40,10 @@ export default function SearchBar() {
         <button
           className="btn botonBuscar"
           type="submit"
+
           onClick={(e) => { handleSubmit(e) }}
         >
-          <GridSearchIcon fontSize="large" onClick={(e) => { handleSubmit(e) }} />
+          <GridSearchIcon fontSize="medium" onClick={(e) => { handleSubmit(e) }} />
         </button>
       </Box>
     </form>

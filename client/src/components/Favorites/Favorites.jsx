@@ -41,7 +41,7 @@ const Favoritos = () => {
 
   return (
     <>
-      <button className="btn btn float-left fav-btn" onClick={() => setShow(true)}>
+      <button className="btn btn-float-left fav-btn" onClick={() => setShow(true)}>
         <img src={Fav} alt="imagen" />
       </button>
       <Offcanvas

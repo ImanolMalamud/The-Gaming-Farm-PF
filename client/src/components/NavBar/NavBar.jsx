@@ -39,7 +39,14 @@ function NavBar() {
   return (
     <nav
       className="navbar navbar-expand-lg mx-auto"
-      style={{ height: "10%", padding: "0", margin: "0", backgroundColor: "#0f0e17", alignItems: "center", columnGap: "20px" }}
+      style={{
+        height: "10%",
+        padding: "0",
+        margin: "0",
+        backgroundColor: "#0f0e17",
+        alignItems: "center",
+        columnGap: "20px"
+      }}
     >
 
       <Box ml="20px">
@@ -84,12 +91,12 @@ function NavBar() {
         </Box>
 
         <Box display="d-flex" justifyContent="center" alignItems="center" columnGap="10px">
-          <Box>
-            <Favoritos />
-          </Box>
+          {/* <Box>
+          </Box> */}
 
-          <Box >
-            <Button variant="" class="btn btn float-right" onClick={openCart}>
+          <Box display="d-flex">
+            <Favoritos />
+            <Button variant="" class="btn btn-float-right" onClick={openCart}>
               {""}
               <img src={Carrito} alt="imagen" className="img-fluid" />
               <div className="quantity-circle">{cartQuantity ? cartQuantity : ""}</div>
@@ -97,12 +104,12 @@ function NavBar() {
           </Box>
 
           {isAuthenticated ? (
-            <Box mr="20px" ml="15px">
+            <Box mr="20px" ml="5px" >
               <Profile />
               <LogoutButton />
             </Box>
           ) : (
-            <Box mr="20px" ml="15px">
+            <Box mr="20px" ml="5px">
               <LoginButton />
             </Box>
           )}

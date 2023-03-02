@@ -1,4 +1,36 @@
-const { Product, Mark, Category, Review } = require("../../db")
+const { Product, Mark, Category, Review } = require("../db")
+const prodJson = require("../../productos.json")
+
+const createProductsJSON = async () => {
+  try {
+    const promises = prodJson.products.map(async prod => {
+      const category = await Category.findOne({
+        where: { title: prod.category },
+      })
+
+      const marca = await Mark.findOne({
+        where: { title: prod.mark },
+      })
+
+      const producto = await Product.create({
+        title: prod.title,
+        price: prod.price,
+        detail: prod.detail,
+        img: prod.img,
+        stock: prod.stock,
+      })
+
+      await producto.addMark(marca)
+      await producto.addCategory(category)
+    })
+
+    await Promise.all(promises)
+
+    return "La base de datos se ha cargado con exito"
+  } catch (error) {
+    return error
+  }
+}
 
 // Funcion para traer todos los juegos, incluye el modelo categoria
 const getAllProducts = async () => {
@@ -13,7 +45,7 @@ const getAllProducts = async () => {
         },
         {
           model: Review,
-          attributes: ["id","comment", "rating", "createdAt"],
+          attributes: ["id", "comment", "rating", "createdAt"],
         },
       ],
     })
@@ -67,7 +99,7 @@ const createProducts = async (req, res) => {
     }
 
     res.status(200).send("Product created succesfully")
-    console.log("producto creado");
+    console.log("producto creado")
   } catch (error) {
     console.log("este es el error", error)
     res.status(404).send(error)
@@ -91,9 +123,9 @@ const getCategories = async (req, res) => {
 const getMarks = async (req, res) => {
   try {
     const mak = await getAllProducts()
-    let extrae = mak.filter(el => el.Marks[0] !== undefined )
+    let extrae = mak.filter(el => el.Marks[0] !== undefined)
     let m = extrae.map(el => {
-    return el.Marks[0].title
+      return el.Marks[0].title
     })
     res.status(200).send(m)
   } catch (error) {
@@ -102,24 +134,25 @@ const getMarks = async (req, res) => {
 }
 
 const modifyProducts = async (req, res, next) => {
-  const id = req.params.id;
-  const product = req.body;
+  const id = req.params.id
+  const product = req.body
   try {
     await Product.update(product, {
       where: {
         id: id,
       },
-    });
-    return res.json("Producto modificado");
+    })
+    return res.json("Producto modificado")
   } catch (err) {
-    next(err);
+    next(err)
   }
 }
 
 module.exports = {
   getAllProducts,
+  createProductsJSON,
   createProducts,
   getCategories,
   getMarks,
-  modifyProducts
+  modifyProducts,
 }

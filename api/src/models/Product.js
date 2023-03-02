@@ -17,7 +17,7 @@ module.exports = sequelize => {
         allowNull: false,
       },
       price: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         allowNull: false,
       },
       detail: {
@@ -31,13 +31,13 @@ module.exports = sequelize => {
       stock: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: 0
+        defaultValue: 0,
       },
       isActive: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: true
-    }
+        defaultValue: true,
+      },
     },
     { timestamps: false }
   )

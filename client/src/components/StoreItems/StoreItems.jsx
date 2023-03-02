@@ -13,6 +13,7 @@ import { sortByPrice } from "../../hooks/sortByPrice";
 import { paginateItems } from "../../hooks/paginateItems";
 import { getNumberButtons } from "../../hooks/getNumberButtons";
 import Footer from "../Footer/Footer";
+import { convertLength } from "@mui/material/styles/cssUtils";
 
 
 
@@ -40,8 +41,13 @@ function StoreItems({ currentVideogames }) {
   // variable auxiliar para filtrar, ordenar y paginar los items
   let filteredAndSorted = items;
 
+<<<<<<< HEAD
   if (mandofilter[0]) { filteredAndSorted = mandofilter }
   if (juegosfilter[0]) { filteredAndSorted = juegosfilter }
+=======
+  //   if(mandofilter[0]){filteredAndSorted = mandofilter}
+  // if(juegosfilter[0]){filteredAndSorted = juegosfilter}
+>>>>>>> 3e2d8b921bdf142a3d55f15f603a26d7a5fe88ce
 
   // Filtrado por categoria
   filteredAndSorted = categoryFilter
@@ -50,6 +56,18 @@ function StoreItems({ currentVideogames }) {
     :
     filteredAndSorted
 
+<<<<<<< HEAD
+=======
+  // Filtrado por marca
+  // filteredAndSorted = markFilter
+  //   ? filteredbyMarks(filteredAndSorted, markFilter, resetCurrentPage)
+  //   : filteredAndSorted;
+
+  // Filtrado por mandos
+  // filteredAndSorted = mandofilter
+  // ? mandofilter
+  // : filteredAndSorted;
+>>>>>>> 3e2d8b921bdf142a3d55f15f603a26d7a5fe88ce
 
   // Filtrado por nombre
   filteredAndSorted = nameFilter
@@ -67,6 +85,17 @@ function StoreItems({ currentVideogames }) {
     filteredAndSorted
 
 
+<<<<<<< HEAD
+=======
+
+  // filteredAndSorted = mandofilter[0] ?
+  // mandofilter : filteredAndSorted
+
+  // filteredAndSorted = juegosfilter[0] ?
+  // juegosfilter : filteredAndSorted
+
+
+>>>>>>> 3e2d8b921bdf142a3d55f15f603a26d7a5fe88ce
   // Paginate items
   let currentItems = paginateItems(filteredAndSorted, currentPage, itemsPerPage)
 
@@ -76,10 +105,16 @@ function StoreItems({ currentVideogames }) {
 
   return (
     <>
+      {console.log('items: ', items)}
       <div className="divG">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3e2d8b921bdf142a3d55f15f603a26d7a5fe88ce
         <div className="modelo3">
-          {currentItems.length
+          {items[0]
             ?
+<<<<<<< HEAD
             currentItems.map((item) => {
               if (item.isActive) {
                 return (
@@ -99,6 +134,24 @@ function StoreItems({ currentVideogames }) {
                 )
               }
             })
+=======
+            items.map((item) =>
+              // item.isActive ? 
+              <>
+                <Link to={`/products/${item.id}`}>
+                </Link>
+                <div className="modelo">
+                  <StoreItem
+                    id={item.id}
+                    name={item.title}
+                    img={item.img}
+                    price={item.price}
+                    stock={item.stock}
+                  />
+                </div>
+              </>
+            )
+>>>>>>> 3e2d8b921bdf142a3d55f15f603a26d7a5fe88ce
             :
             <div>  "No hay productos todavía."</div>
           }
